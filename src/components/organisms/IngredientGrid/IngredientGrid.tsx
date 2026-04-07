@@ -4,12 +4,16 @@ import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 import { SkeletonCard } from '@/components/atoms/SkeletonCard/SkeletonCard';
 import { IngredientCard } from '@/components/molecules/IngredientCard/IngredientCard';
 import { useIngredients } from '@/hooks/useIngredients';
-import { UtensilsCrossed } from 'lucide-react';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { UtensilsCrossed, Loader2 } from 'lucide-react';
 
-const SKELETON_COUNT = 20;
+const SKELETON_COUNT = 24;
 
 export function IngredientGrid() {
   const { filteredIngredients, searchQuery, setSearch, status } = useIngredients();
+  
+  // Use client-side infinite scroll to chunk the rendering of over 500 ingredients
+  const { visibleItems, loadMoreRef, hasMore } = useInfiniteScroll(filteredIngredients, 24);
 
   const isLoading = status === 'loading' || status === 'idle';
   const isEmpty = !isLoading && filteredIngredients.length === 0;
@@ -39,10 +43,17 @@ export function IngredientGrid() {
           ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <SkeletonCard key={i} />
             ))
-          : filteredIngredients.map((ingredient) => (
+          : visibleItems.map((ingredient) => (
               <IngredientCard key={ingredient.idIngredient} ingredient={ingredient} />
             ))}
       </div>
+
+      {/* Infinite Scroll Trigger */}
+      {!isLoading && !isEmpty && hasMore && (
+        <div ref={loadMoreRef} className="flex justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
+        </div>
+      )}
     </section>
   );
 }

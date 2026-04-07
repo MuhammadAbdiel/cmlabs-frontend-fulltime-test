@@ -4,7 +4,8 @@ import { SearchInput } from '@/components/atoms/SearchInput/SearchInput';
 import { SkeletonCard } from '@/components/atoms/SkeletonCard/SkeletonCard';
 import { MealCard } from '@/components/molecules/MealCard/MealCard';
 import { useMeals } from '@/hooks/useMeals';
-import { UtensilsCrossed } from 'lucide-react';
+import { useInfiniteScroll } from '@/hooks/useInfiniteScroll';
+import { UtensilsCrossed, Loader2 } from 'lucide-react';
 
 interface MealGridProps {
   ingredientName: string;
@@ -14,6 +15,9 @@ const SKELETON_COUNT = 12;
 
 export function MealGrid({ ingredientName }: MealGridProps) {
   const { filteredMeals, searchQuery, setSearch, status } = useMeals(ingredientName);
+
+  // Client-side pagination/infinite scroll for performance
+  const { visibleItems, loadMoreRef, hasMore } = useInfiniteScroll(filteredMeals, 12);
 
   const isLoading = status === 'loading' || status === 'idle';
   const isEmpty = !isLoading && filteredMeals.length === 0;
@@ -44,10 +48,17 @@ export function MealGrid({ ingredientName }: MealGridProps) {
           ? Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <SkeletonCard key={i} />
             ))
-          : filteredMeals.map((meal) => (
+          : visibleItems.map((meal) => (
               <MealCard key={meal.idMeal} meal={meal} />
             ))}
       </div>
+
+      {/* Infinite Scroll Trigger */}
+      {!isLoading && !isEmpty && hasMore && (
+        <div ref={loadMoreRef} className="flex justify-center py-8">
+          <Loader2 className="h-6 w-6 animate-spin text-zinc-500" />
+        </div>
+      )}
     </section>
   );
 }
