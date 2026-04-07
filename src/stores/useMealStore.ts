@@ -10,10 +10,7 @@ interface MealState {
   status: ApiStatus;
   error: string | null;
 
-  // Derived
-  filteredMeals: () => MealSummary[];
-
-  // Actions
+// Actions
   fetchMeals: (ingredientName: string) => Promise<void>;
   setSearch: (query: string) => void;
   reset: () => void;
@@ -29,13 +26,6 @@ const initialState = {
 
 export const useMealStore = create<MealState>((set, get) => ({
   ...initialState,
-
-  filteredMeals: () => {
-    const { meals, searchQuery } = get();
-    if (!searchQuery.trim()) return meals;
-    const q = searchQuery.toLowerCase();
-    return meals.filter((m) => m.strMeal.toLowerCase().includes(q));
-  },
 
   fetchMeals: async (ingredientName) => {
     // Re-fetch only if ingredient changed

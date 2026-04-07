@@ -9,10 +9,7 @@ interface IngredientState {
   status: ApiStatus;
   error: string | null;
 
-  // Derived
-  filteredIngredients: () => Ingredient[];
-
-  // Actions
+// Actions
   fetchIngredients: () => Promise<void>;
   setSearch: (query: string) => void;
   reset: () => void;
@@ -27,16 +24,6 @@ const initialState = {
 
 export const useIngredientStore = create<IngredientState>((set, get) => ({
   ...initialState,
-
-  // Computed: filter on the fly by strIngredient name
-  filteredIngredients: () => {
-    const { ingredients, searchQuery } = get();
-    if (!searchQuery.trim()) return ingredients;
-    const q = searchQuery.toLowerCase();
-    return ingredients.filter((i) =>
-      i.strIngredient.toLowerCase().includes(q)
-    );
-  },
 
   fetchIngredients: async () => {
     // Prevent duplicate fetches

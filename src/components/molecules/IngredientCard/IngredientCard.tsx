@@ -7,8 +7,8 @@ import { formatText } from "@/lib/utils";
 
 export function IngredientCard({ ingredient }: IngredientCardProps) {
   const name = ingredient.strIngredient;
-  // TheMealDB ingredient thumbnail convention
-  const imageUrl = `https://www.themealdb.com/images/ingredients/${encodeURIComponent(name)}-Small.png`;
+  // Use the thumbnail URL directly from the API response
+  const imageUrl = ingredient.strThumb;
 
   return (
     <Link

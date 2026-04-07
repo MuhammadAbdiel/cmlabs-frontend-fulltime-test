@@ -76,7 +76,8 @@ export function SearchInput({
           'text-sm text-zinc-100 placeholder:text-zinc-500',
           'outline-none transition-all duration-200',
           'focus:border-amber-500/60 focus:ring-2 focus:ring-amber-500/20',
-          'hover:border-zinc-700'
+          'hover:border-zinc-700',
+          '[&::-webkit-search-cancel-button]:appearance-none'
         )}
       />
 
